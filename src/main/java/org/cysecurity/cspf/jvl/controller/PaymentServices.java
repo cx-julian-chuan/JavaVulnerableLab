@@ -1,8 +1,10 @@
+package org.cysecurity.cspf.jvl.controller;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Properties;
- 
-public class PaymentServiceClient {
+
+public class PaymentServices {
  
     // Stripe live secret key
     private static final String STRIPE_API_KEY = "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";
