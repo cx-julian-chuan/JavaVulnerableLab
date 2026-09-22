@@ -88,6 +88,21 @@
 		<artifactId>jaxb-runtime</artifactId>
 		<version>2.3.1</version>
 	</dependency>
+	<!-- OWASP 2025 A08 Software or Data Integrity Failures / malicious package:
+	     org.mvnpm:posthog-node:4.18.1 is a real, OSV-confirmed malicious package
+	     (MAL-2025-191470, published 2025-11-26) — the Shai-Hulud 2.0 supply-chain
+	     attack mirrored a compromised npm posthog-node release into Maven Central
+	     via the mvnpm bridge. Credential-harvesting payload. This exact version has
+	     since been pulled from Maven Central (confirmed 404 on repo1.maven.org) —
+	     mvn dependency:tree tolerates the missing POM as a warning and still lists
+	     the coordinate; a full mvn compile fails to resolve it. Untested whether
+	     Checkmarx One's SCA scan needs full resolution or works off the declared
+	     coordinate the way it already tolerates this project's other build issues. -->
+	<dependency>
+		<groupId>org.mvnpm</groupId>
+		<artifactId>posthog-node</artifactId>
+		<version>4.18.1</version>
+	</dependency>
   </dependencies>
   <build>
     <finalName>JavaVulnerableLab</finalName>
