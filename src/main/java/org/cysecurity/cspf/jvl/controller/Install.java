@@ -13,12 +13,13 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.Statement; 
+import java.sql.Statement;
 import java.util.Properties;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import org.cysecurity.cspf.jvl.model.HashMe;
 
 /**
@@ -48,8 +49,20 @@ public class Install extends HttpServlet {
    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        // CSRF protection: validate the synchronizer token submitted with the form
+        // against the per-session token stored when install.jsp was rendered.
+        HttpSession session = request.getSession(false);
+        String csrfFormToken = request.getParameter("csrfToken");
+        String csrfSessionToken = (session != null) ? (String) session.getAttribute("csrfToken") : null;
+
+        if (csrfFormToken == null || csrfSessionToken == null
+                || !csrfFormToken.equals(csrfSessionToken)) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Invalid or missing CSRF token");
+            return;
+        }
+
         String configPath=getServletContext().getRealPath("/WEB-INF/config.properties");
-        
+
         //Getting Database Configuration from User Input
         dburl = request.getParameter("dburl");
         jdbcdriver = request.getParameter("jdbcdriver");
